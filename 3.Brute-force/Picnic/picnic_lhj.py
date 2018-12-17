@@ -1,3 +1,10 @@
+#!/usr/bin/python
+# -*- coding:UTF-8 -*-
+
+import time
+start_time = time.time()
+
+
 def picnic(_n, _m, _pairs, _friends):
     # 친구 관계가 없는 경우
     if _m == 0:
@@ -34,5 +41,7 @@ if __name__ == "__main__":
     m = 10
     pairs = [0, 1, 0, 2, 1, 2, 1, 3, 1, 4, 2, 3, 2, 4, 3, 4, 3, 5, 4, 5]
 
-    print(picnic(n, m, pairs, set()))
+    print picnic(n, m, pairs, set())
+
+    print time.time() - start_time
 
