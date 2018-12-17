@@ -2,7 +2,6 @@
 # -*- coding:UTF-8 -*-
 
 from __future__ import print_function
-
 import time
 start_time = time.time()
 
@@ -21,6 +20,7 @@ switch_info = [[0, 1, 2],
 def clock_sync(_input, _candidate_index, _index_list, _size):
     if _size == 0:
         # print(_candidate_index)
+        # print(_input)
         for index in _candidate_index:
             switch_clocks = switch_info[index]
             for clock_index in switch_clocks:
@@ -45,6 +45,8 @@ def clock_sync(_input, _candidate_index, _index_list, _size):
                     _input[clock_index] = update_val
             return False
         else:
+            print(_candidate_index)
+            print(_input)
             return True
         # return 1
 
@@ -52,9 +54,30 @@ def clock_sync(_input, _candidate_index, _index_list, _size):
         # cnt = 0
         for _index in _index_list:
             _candidate_index.append(_index)
-            # cnt += clock_sync(_input, _candidate_index, _index_list, _size-1)
-            _result = clock_sync(_input, _candidate_index, _index_list, _size-1)
-            _candidate_index.remove(_index)
+
+            _dic = dict()
+            for index in _candidate_index:
+                if index in _dic.keys():
+                    _v = _dic[index]
+                    _dic[index] = _v + 1
+                else:
+                    _dic[index] = 1
+
+            correction = 0
+            for k in _dic.keys():
+                if _dic[k] % 4 == 0:
+                    _candidate_index = filter(lambda a: a != k, _candidate_index)
+                    correction += 1
+
+            if _size-1-correction < 0:
+                _result = clock_sync(_input, _candidate_index, _index_list, 0)
+            else:
+                _result = clock_sync(_input, _candidate_index, _index_list, _size-1-correction)
+
+            try:
+                _candidate_index.remove(_index)
+            except ValueError:
+                pass
 
             if _result:
                 return True
@@ -64,16 +87,11 @@ def clock_sync(_input, _candidate_index, _index_list, _size):
 
 
 if __name__ == "__main__":
-    input_list = [12, 6, 6, 6, 6, 6, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12]
-    # input_list = [12, 9, 3, 12, 6, 6, 9, 3, 12, 9, 12, 9, 12, 12, 6, 6]
+    # input_list = [12, 6, 6, 6, 6, 6, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12]
+    input_list = [12, 9, 3, 12, 6, 6, 9, 3, 12, 9, 12, 9, 12, 12, 6, 6]
 
-    result = clock_sync(input_list, list(), range(10), 1)
+    result = clock_sync(input_list, list(), range(10), 9)
     print(result)
 
-    #
-    # for i in range(1, 11):
-    #     result = clock_sync(input_list, list(), range(10), i)
-    #     if result is True:
-    #         print(i)
-    #         break
+    print(time.time() - start_time)
 
